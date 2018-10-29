@@ -13,7 +13,7 @@ var connection = mysql.createConnection({
 // Creates the connection with the server and loads the product data upon a successful connection
 connection.connect(function(err) {
  if (err) throw err;
-    console.log("Successful!");
+    console.log("Connected!");
     createTable();
     // {
     // console.error("error connecting: " + err);
@@ -82,13 +82,16 @@ var promptCustomer = function(res){
                         }
                     }
                 }).then(function(answer){
+                    // Compare total quantity to wanted purchase quantity
                     if((res[id].quantity - answer.quantity)>0){
                         connection.query("UPDATE products SET quantity ='" + (res[id].quantity - answer.quantity) + "' WHERE product_name='" + product +"'", function(err,res2){
+                            // Alert user if their order went through
                             console.log("Product purchased.");
                             createTable();
                         })
                     } else{
-                        console.log("Invalid selection. Please try again.");
+                        // Alert user if there is an insufficient amount of the product they want to purchase
+                        console.log("Insufficient quantity. Please try again.");
                         promptCustomer(res);
                     }
                 })
