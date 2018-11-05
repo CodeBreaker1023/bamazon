@@ -24,15 +24,15 @@ var createTable = function() {
             res[i].department_name + " // " + res[i].price + " // " + res[i].quantity +
             "\n");
         }
+        promptManager(res);
     })
-    promptManager(res);
 }
 createTable();
 
 // Use inquirer to prompt manager what they would like to do
 var promptManager = function(res) {
     inquirer.prompt([{
-        type: "list",
+        type: "rawlist",
         name: "choice",
         message: "Pick from the options below:",
         choices: ["View Products for Sale", "View Low Inventory", "Increase Inventory of an Exisiting Product", "Add a new Product"]
@@ -48,8 +48,27 @@ var promptManager = function(res) {
         if(val.choice = "Increase Inventory of an Exisiting Product"){
             increaseInventory();
         }
-        if(val.choice = "Add a new Product"){
+        if(val.choice = "Add a new Product") {
             addProduct();
         }
     })
+}
+
+// Create lowInventory() to list all products with less than 5 items left in inventory
+function lowInventory() {
+    inquirer.prompt([{
+        type: "input",
+        name: "product_name",
+        message: ""
+    }])
+}
+
+// Create increaseInventory() to increase the inventory of a product
+function increaseInventory() {
+
+}
+
+// Create addProduct() to add a product to the inventory list
+function addProduct() {
+
 }
