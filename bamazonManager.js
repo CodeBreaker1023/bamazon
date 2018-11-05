@@ -12,4 +12,44 @@ var connection = mysql.createConnection({
 // Creates the connection with the server and loads the product data upon a successful connection
 connection.connect(function(err) {
  if (err) throw err;
-    console.log("Connected!");
+    console.log("Connected!"); 
+}
+
+var createTable = function() {
+    connection.query("SELECT * FROM products", function(err,res) {
+        if (err) throw err;
+        console.log("Item ID // Product Name // Department Name // Price // In Stock")
+        for(var i=0; i<res.length; i++){
+        console.log(res[i].item_id + " // " + res[i].product_name + " // " +
+            res[i].department_name + " // " + res[i].price + " // " + res[i].quantity +
+            "\n");
+        }
+    })
+    promptManager(res);
+}
+createTable();
+
+// Use inquirer to prompt manager what they would like to do
+var promptManager = function(res) {
+    inquirer.prompt([{
+        type: "list",
+        name: "choice",
+        message: "Pick from the options below:",
+        choices: ["View Products for Sale", "View Low Inventory", "Increase Inventory of an Exisiting Product", "Add a new Product"]
+    }]).then(function(val) {
+        if(val.choice = "View Products for Sale") {
+            console.log(res[i].item_id + " // " + res[i].product_name + " // " +
+            res[i].department_name + " // " + res[i].price + " // " + res[i].quantity +
+            "\n");
+        }
+        if(val.choice = "View Low Inventory") {
+            lowInventory();
+        }
+        if(val.choice = "Increase Inventory of an Exisiting Product"){
+            increaseInventory();
+        }
+        if(val.choice = "Add a new Product"){
+            addProduct();
+        }
+    })
+}
