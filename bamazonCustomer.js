@@ -51,7 +51,7 @@ var createTable = function(){
             res[i].department_name + " // " + res[i].price + " // " + res[i].quantity +
             "\n");
         } 
-    // Get user inquirer response
+    // Get user inquirer response(s)
     promptCustomer(res);
     })
 }
