@@ -24,31 +24,34 @@ var createTable = function() {
             res[i].department_name + " // " + res[i].price + " // " + res[i].quantity +
             "\n");
         }
-        promptManager(res);
+        promptAction();
     })
 }
-createTable();
+
 
 // Use inquirer to prompt manager what they would like to do
-var promptManager = function(res) {
+var promptAction = function() {
     inquirer.prompt([{
-        type: "rawlist",
+        type: "list",
         name: "choice",
         message: "Pick from the options below:",
         choices: ["View Products for Sale", "View Low Inventory", "Increase Inventory of an Exisiting Product", "Add a new Product"]
     }]).then(function(val) {
-        if(val.choice = "View Products for Sale") {
-            console.log(res[i].item_id + " // " + res[i].product_name + " // " +
-            res[i].department_name + " // " + res[i].price + " // " + res[i].quantity +
-            "\n");
+        if(val.choice === "View Products for Sale") {
+            for(var i=0;i<val.length;i++)
+            {
+                console.log(res[i].item_id + " // " + res[i].product_name + " // " +
+                res[i].department_name + " // " + res[i].price + " // " + res[i].quantity +
+                "\n");
+            }
         }
-        if(val.choice = "View Low Inventory") {
+        if(val.choice === "View Low Inventory") {
             lowInventory();
         }
-        if(val.choice = "Increase Inventory of an Exisiting Product"){
+        if(val.choice === "Increase Inventory of an Exisiting Product"){
             increaseInventory();
         }
-        if(val.choice = "Add a new Product") {
+        if(val.choice === "Add a new Product") {
             addProduct();
         }
     })
@@ -56,39 +59,50 @@ var promptManager = function(res) {
 
 // Create lowInventory() to list all products with less than 5 items left in inventory
 function lowInventory() {
-    // inquirer.prompt([{
-    //     type: "input",
-    //     name: "product_name",
-    //     message: ""
-    // }])
-    if()
+
+    connection.query("SELECT * FROM products WHERE quantity<5", function(err,res) {
+        if (err) throw err;
+        console.log("Item ID // Product Name // Department Name // Price // In Stock")
+        for(var i=0; i<res.length; i++){
+        console.log(res[i].item_id + " // " + res[i].product_name + " // " +
+            res[i].department_name + " // " + res[i].price + " // " + res[i].quantity +
+            "\n");
+        }
+    }
 }
 
 // Create increaseInventory() to increase the inventory of a product
 function increaseInventory() {
     inquirer.prompt([{
         type: "input",
-        name: "product_name",
-        message: "Which product's inventory would you like to increase?"
+        name: "item_id",
+        message: "Type the ITEM ID of product whose inventory would you like to increase?"
     },{
         type: "input",
         name: "added_inventory",
         message: "How many would you like to add?"
     }]).then(function(val){
         // create for loop to cycle through all the products comparing manager answer to product name
-        for(i=0; i<res.length; i++){
-            if(res[i].product_name == val.product_name){
-                connection.query('UPDATE products SET quantity=quantity+' + val.added_inventory +' WHERE item_id=' + res[i].item_id + ';', function(err,res){
+            var temp = "SELECT quantity FROM products WHERE item_id="+parseInt(val.item_id)+";"
+
+            connection.query(temp,function(err,add){
+
+                console.log("Quantity from table: "+add);
+                var q = add[0].quantity + parseInt(val.added_inventory);
+
+                connection.query('UPDATE products SET quantity=' +q +' WHERE item_id=' + parseInt(val.item_id) + ';', function(err,res){
                     if(err) throw err;
                     if(res.affectedRows == 0){
                         console.log("This item does not exist. Please try again.");
-                        createTable();
+                        //createTable();
                     } else {
-                        console.log("The inventory for " + val.product_name + " has been updated")
+                        console.log("The inventory has been updated")
                     }
-                })
-            }
-        }
+                });
+            });
+
+                 
+        
     })
 }
 
@@ -111,12 +125,12 @@ function addProduct() {
         // Inquire about price
         type: "input",
         name: "price",
-        message: "What is the name of the product?"
+        message: "What is the price of the product?"
     },{
         // Inquire about quantity
         type: "input",
         name: "quantity",
-        message: "What is the name of the product?"
+        message: "What is the desired quantity you wish to get?"
     }]).then(function(val){
         connection.query("INSTERT INTO products (product_name, department_name, price, quantity) VALUES ('"+ val.product_name + "','" + val.department_name + "'," + val.price + "," + val.quantity + ");", function(err,res){
             if(err)throw err;
@@ -126,4 +140,4 @@ function addProduct() {
     })
 }
 
-createTable();
+//createTable();
